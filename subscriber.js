@@ -8,14 +8,13 @@ amqp.connect('amqp://localhost',(err,connection) => {
             throw err
         }
         let queueName = "test-queue"
-        let message = "this is a test message"
         channel.assertQueue(queueName,{
             durable : false
         })
-        channel.sendToQueue(queueName,Buffer.from(message))
-        console.log(`message : ${message}`)
-        setTimeout(()=>{
-          connection.close() 
-        },2000)
+       channel.consume(queueName,(msg)=>{
+        console.log(`recieved : ${msg.content.toString()}`)
+       },{
+        noAck:true
+       })
     })
 })
